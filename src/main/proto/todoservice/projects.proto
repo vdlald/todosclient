@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package todo;
+
+option java_package = "com.proto.todo";
+option java_multiple_files = true;
+
+message Project {
+  string id = 1;
+  string userId = 2;
+  string name = 3;
+  bool isDeleted = 4;
+  int64 createdAt = 5;  // unix time
+}
+
+message GetAllUserProjectsRequest {
+  string userId = 1;
+}
+
+message GetAllUserProjectsResponse {
+  Project project = 1;
+}
+
+message GetProjectRequest {
+  string projectId = 1;
+}
+
+message GetProjectResponse {
+  Project project = 1;
+}
+
+message CreateProjectRequest {
+  Project project = 1;  // projectId (id), userId don't matter
+}
+
+message CreateProjectResponse {
+  Project project = 1;
+}
+
+message UpdateProjectRequest {
+  Project project = 1;
+}
+
+message UpdateProjectResponse {
+}
+
+message DeleteProjectRequest {
+  string projectId = 1;
+}
+
+message DeleteProjectResponse {
+}
+
+service ProjectService {
+  // throws out an "OK" exception if no data was found
+  // throws out an "PERMISSION_DENIED exception if the user is not requesting his projects or he is not an admin
+  rpc GetAllUserProjects(GetAllUserProjectsRequest) returns (stream GetAllUserProjectsResponse) {};
+
+  // throws out an "NOT_FOUND" exception if no data was found
+  // throws out an "PERMISSION_DENIED exception if the user is not requesting his project or he is not an admin
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {};
+
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {};
+
+  // throws out an "NOT_FOUND" exception if no data was found
+  // throws out an "PERMISSION_DENIED exception if the user is not updating his project
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {};
+
+  // Completely removes the project from the database
+  // throws out an "NOT_FOUND" exception if no data was found
+  // throws out an "PERMISSION_DENIED exception if the user is not deleting his project
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {};
+}

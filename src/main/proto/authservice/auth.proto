@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package auth;
+
+option java_package = "com.proto.auth";
+option java_multiple_files = true;
+
+message RegisterUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message RegisterUserResponse {
+  string userId = 1;
+}
+
+message AuthenticateUserRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message AuthenticateUserResponse {
+  string jwt = 1;
+}
+
+service UserService {
+  // May produce ALREADY_EXISTS exception
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {};
+
+  // May produce UNAUTHENTICATED and NOT_FOUND exception
+  rpc AuthenticateUser(AuthenticateUserRequest) returns (AuthenticateUserResponse) {};
+}

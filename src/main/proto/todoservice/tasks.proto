@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package todo;
+
+option java_package = "com.proto.todo";
+option java_multiple_files = true;
+
+message Task {
+  string id = 1;
+  string userId = 2;  // owner id
+  string projectId = 3;  // task project
+  string title = 4;
+  string content = 5;
+  bool completed = 6;
+  int64 deadline = 7;  // unix time
+  int64 createdAt = 8;  // unix time
+  int64 completedAt = 9;  // unix time
+  bool isDeleted = 10;
+}
+
+message GetAllUserTasksRequest {
+  string userId = 1;
+}
+
+message GetAllUserTasksResponse {
+  Task task = 1;
+}
+
+message GetTaskRequest {
+  string taskId = 1;
+}
+
+message GetTaskResponse {
+  Task task = 1;
+}
+
+message CreateTaskRequest {
+  Task task = 1;  // taskId (id), userId don't matter
+}
+
+message CreateTaskResponse {
+  Task task = 1;
+}
+
+message UpdateTaskRequest {
+  Task task = 1;
+}
+
+message UpdateTaskResponse {
+}
+
+message DeleteTaskRequest {
+  string taskId = 1;
+}
+
+message DeleteTaskResponse {
+}
+
+service TaskService {
+  // throws out an "OK" exception if no data was found
+  // throws out an "PERMISSION_DENIED exception if the user is not requesting his tasks or he is not an admin
+  rpc GetAllUserTasks(GetAllUserTasksRequest) returns (stream GetAllUserTasksResponse) {};
+
+  // throws out an "NOT_FOUND" exception if no data was found
+  // throws out an "PERMISSION_DENIED exception if the user is not requesting his task or he is not an admin
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse) {};
+
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse) {};
+
+  // throws out an "NOT_FOUND" exception if no data was found
+  // throws out an "PERMISSION_DENIED exception if the user is not updating his task
+  rpc UpdateTask(UpdateTaskRequest) returns (UpdateTaskResponse) {};
+
+  // Completely removes the task from the database
+  // throws out an "NOT_FOUND" exception if no data was found
+  // throws out an "PERMISSION_DENIED exception if the user is not deleting his task
+  rpc DeleteTask(DeleteTaskRequest) returns (DeleteTaskResponse) {};
+}
