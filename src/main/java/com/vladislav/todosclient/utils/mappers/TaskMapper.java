@@ -12,7 +12,7 @@ import java.util.UUID;
 public class TaskMapper implements PojoMapper<TaskPojo, Task> {
     @Override
     public TaskPojo toDocument(Task task) {
-        return new TaskPojo()
+        return TaskPojo.builder()
                 .setId(UUID.fromString(task.getId()))
                 .setUserId(UUID.fromString(task.getUserId()))
                 .setProjectId(UUID.fromString(task.getProjectId()))
@@ -22,7 +22,8 @@ public class TaskMapper implements PojoMapper<TaskPojo, Task> {
                 .setDeadline(Instant.ofEpochMilli(task.getDeadline()).atOffset(ZoneOffset.UTC).toLocalDateTime())
                 .setCreatedAt(Instant.ofEpochMilli(task.getCreatedAt()).atOffset(ZoneOffset.UTC).toLocalDateTime())
                 .setCompletedAt(Instant.ofEpochMilli(task.getCompletedAt()).atOffset(ZoneOffset.UTC).toLocalDateTime())
-                .setIsDeleted(task.getIsDeleted());
+                .setIsDeleted(task.getIsDeleted())
+                .build();
     }
 
     @Override

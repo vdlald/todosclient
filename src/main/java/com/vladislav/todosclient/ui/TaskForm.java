@@ -35,7 +35,6 @@ public class TaskForm extends FormLayout {
     public TaskForm() {
         addClassName("task-form");
 
-        binder.setReadOnly(false);
         binder.bindInstanceFields(this);
 
         add(

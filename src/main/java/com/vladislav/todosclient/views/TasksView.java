@@ -1,9 +1,11 @@
 package com.vladislav.todosclient.views;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -35,27 +37,55 @@ public class TasksView extends VerticalLayout {
         setSizeFull();
 
         configureGrid();
-        configureFilter();
+
+        taskForm.addListener(TaskForm.SaveEvent.class, this::saveTask);
+        taskForm.addListener(TaskForm.DeleteEvent.class, this::deleteTask);
+        taskForm.addListener(TaskForm.CloseEvent.class, e -> closeEditor());
 
         final Div content = new Div(grid, taskForm);
         content.addClassName("content");
         content.setSizeFull();
 
-        add(filterText, content);
+        add(getToolBar(), content);
         updateGrid();
         closeEditor();
     }
 
-    private void configureFilter() {
+    private void deleteTask(TaskForm.DeleteEvent event) {
+        // todo: delete task
+        updateGrid();
+        closeEditor();
+    }
+
+    private void saveTask(TaskForm.SaveEvent event) {
+        // todo: save task
+        updateGrid();
+        closeEditor();
+    }
+
+    private HorizontalLayout getToolBar() {
         filterText.setPlaceholder("Filter by title...");
         filterText.setClearButtonVisible(true);
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> updateGrid());
+
+        final Button addTask = new Button("Add task", click -> addTask());
+
+        final HorizontalLayout toolbar = new HorizontalLayout();
+        toolbar.addClassName("toolbar");
+
+        toolbar.add(filterText, addTask);
+        return toolbar;
+    }
+
+    private void addTask() {
+        grid.asSingleSelect().clear();
+        editTask(new TaskPojo());
     }
 
     private void updateGrid() {
         final List<TaskPojo> tasks = List.of(
-                new TaskPojo()
+                TaskPojo.builder()
                         .setId(UUID.randomUUID())
                         .setUserId(UUID.randomUUID())
                         .setProjectId(UUID.randomUUID())
@@ -64,8 +94,9 @@ public class TasksView extends VerticalLayout {
                         .setCompleted(false)
                         .setDeadline(LocalDateTime.now().plusDays(3))
                         .setCreatedAt(LocalDateTime.now())
-                        .setIsDeleted(false),
-                new TaskPojo()
+                        .setIsDeleted(false)
+                        .build(),
+                TaskPojo.builder()
                         .setId(UUID.randomUUID())
                         .setUserId(UUID.randomUUID())
                         .setProjectId(UUID.randomUUID())
@@ -75,7 +106,8 @@ public class TasksView extends VerticalLayout {
                         .setDeadline(LocalDateTime.now())
                         .setCreatedAt(LocalDateTime.now())
                         .setCompletedAt(LocalDateTime.now())
-                        .setIsDeleted(false));
+                        .setIsDeleted(false)
+                        .build());
         final String filterValue = filterText.getValue();
         if (filterValue == null || filterValue.isBlank() || filterValue.isEmpty()) {
             grid.setItems(tasks);
@@ -108,6 +140,7 @@ public class TasksView extends VerticalLayout {
         taskForm.setTask(null);
         taskForm.setVisible(false);
         removeClassName("editing");
+        grid.asSingleSelect().clear();
     }
 
     private void editTask(TaskPojo task) {
