@@ -21,7 +21,7 @@ public class TodoConfiguration {
     }
 
     @Bean
-    public UserServiceGrpc.UserServiceBlockingStub blockingStub(ManagedChannel todoChannel) {
+    public UserServiceGrpc.UserServiceBlockingStub todoBlockingStub(ManagedChannel todoChannel) {
         return UserServiceGrpc.newBlockingStub(todoChannel);
     }
 }

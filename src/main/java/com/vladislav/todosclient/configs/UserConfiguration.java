@@ -21,7 +21,7 @@ public class UserConfiguration {
     }
 
     @Bean
-    public UserServiceGrpc.UserServiceBlockingStub blockingStub(ManagedChannel userChannel) {
+    public UserServiceGrpc.UserServiceBlockingStub userBlockingStub(ManagedChannel userChannel) {
         return UserServiceGrpc.newBlockingStub(userChannel);
     }
 }
