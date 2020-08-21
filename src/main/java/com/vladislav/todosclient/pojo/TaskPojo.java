@@ -5,6 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,12 +20,26 @@ public class TaskPojo {
     private UUID id;
     private UUID userId;
     private UUID projectId;
+
+    @NotNull
+    @NotEmpty
     private String title;
+
+    @NotNull
+    @NotEmpty
     private String content;
-    private Boolean completed;
+
+    @NotNull
+    private Boolean completed = false;
+
     private LocalDateTime deadline;
-    private LocalDateTime createdAt;
+
+    @NotNull
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     private LocalDateTime completedAt;
-    private Boolean isDeleted;
+
+    @NotNull
+    private Boolean isDeleted = false;
 
 }

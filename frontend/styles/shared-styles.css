@@ -1,0 +1,19 @@
+.task-list, .content {
+    display: flex;
+}
+
+.task-list, .task-grid {
+    flex: 2;
+}
+
+.task-list, .task-form {
+    flex: 1;
+    padding: var(--lumo-space-m);
+}
+
+@media all and (max-width: 1100px) {
+    .list-view.editing .toolbar,
+    .list-view.editing .contact-grid {
+        display: none;
+    }
+}

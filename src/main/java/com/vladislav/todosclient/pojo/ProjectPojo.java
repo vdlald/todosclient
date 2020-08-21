@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -16,8 +18,15 @@ public class ProjectPojo {
 
     private UUID id;
     private UUID userId;
+
+    @NotNull
+    @NotEmpty
     private String name;
-    private Boolean isDeleted;
-    private LocalDateTime createdAt;
+
+    @NotNull
+    private Boolean isDeleted = false;
+
+    @NotNull
+    private LocalDateTime createdAt = LocalDateTime.now();
 
 }
