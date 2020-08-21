@@ -43,6 +43,7 @@ public class TasksView extends VerticalLayout {
 
         add(filterText, content);
         updateGrid();
+        closeEditor();
     }
 
     private void configureFilter() {
@@ -99,5 +100,23 @@ public class TasksView extends VerticalLayout {
             return checkbox;
         }).setHeader("Completed");
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
+
+        grid.asSingleSelect().addValueChangeListener(event -> editTask(event.getValue()));
+    }
+
+    private void closeEditor() {
+        taskForm.setTask(null);
+        taskForm.setVisible(false);
+        removeClassName("editing");
+    }
+
+    private void editTask(TaskPojo task) {
+        if (task == null) {
+            closeEditor();
+        } else {
+            taskForm.setTask(task);
+            taskForm.setVisible(true);
+            addClassName("editing");
+        }
     }
 }

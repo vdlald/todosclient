@@ -1,6 +1,5 @@
 package com.vladislav.todosclient.ui;
 
-import com.proto.todo.Task;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -21,11 +20,11 @@ import lombok.Getter;
 
 public class TaskForm extends FormLayout {
 
-    private final TextField titleField = new TextField("Title");
-    private final TextArea contentField = new TextArea("Content");
-    private final DateTimePicker deadlineField = new DateTimePicker("Deadline");
-    private final Checkbox completedField = new Checkbox("Completed", false);
-    private final Checkbox deletedField = new Checkbox("Deleted", false);
+    private final TextField title = new TextField("Title");
+    private final TextArea content = new TextArea("Content");
+    private final DateTimePicker deadline = new DateTimePicker("Deadline");
+    private final Checkbox completed = new Checkbox("Completed", false);
+    private final Checkbox deleted = new Checkbox("Deleted", false);
 
     private final Button save = new Button("Save");
     private final Button delete = new Button("Delete");
@@ -36,14 +35,15 @@ public class TaskForm extends FormLayout {
     public TaskForm() {
         addClassName("task-form");
 
+        binder.setReadOnly(false);
         binder.bindInstanceFields(this);
 
         add(
-                titleField,
-                contentField,
-                deadlineField,
-                deadlineField,
-                new HorizontalLayout(completedField, deletedField),
+                title,
+                content,
+                deadline,
+                deadline,
+                new HorizontalLayout(completed, deleted),
                 createButtonLayout()
         );
     }
