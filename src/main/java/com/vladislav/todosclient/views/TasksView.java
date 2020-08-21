@@ -38,8 +38,8 @@ public class TasksView extends VerticalLayout {
 
         configureGrid();
 
-        taskForm.addListener(TaskForm.SaveEvent.class, this::saveTask);
-        taskForm.addListener(TaskForm.DeleteEvent.class, this::deleteTask);
+        taskForm.addListener(TaskForm.SaveEvent.class, this::onSaveEvent);
+        taskForm.addListener(TaskForm.DeleteEvent.class, this::onDeleteEvent);
         taskForm.addListener(TaskForm.CloseEvent.class, e -> closeEditor());
 
         final Div content = new Div(grid, taskForm);
@@ -51,14 +51,14 @@ public class TasksView extends VerticalLayout {
         closeEditor();
     }
 
-    private void deleteTask(TaskForm.DeleteEvent event) {
-        // todo: delete task
+    private void onDeleteEvent(TaskForm.DeleteEvent event) {
+        deleteTask(event.getTask());
         updateGrid();
         closeEditor();
     }
 
-    private void saveTask(TaskForm.SaveEvent event) {
-        // todo: save task
+    private void onSaveEvent(TaskForm.SaveEvent event) {
+        saveTask(event.getTask());
         updateGrid();
         closeEditor();
     }
@@ -122,18 +122,38 @@ public class TasksView extends VerticalLayout {
         grid.setSizeFull();
         grid.removeColumnByKey("deadline");
         grid.setColumns("title");
+
         grid.addColumn(task -> {
             final LocalDateTime deadline = task.getDeadline();
             return deadline.format(dateTimeFormatter);
         }).setHeader("Deadline");
+
         grid.addComponentColumn(task -> {
             final Checkbox checkbox = new Checkbox(task.getCompleted());
-            checkbox.setEnabled(false);
+            checkbox.addValueChangeListener(event -> {
+                final Boolean completed = event.getValue();
+                if (completed) {
+                    task.setCompleted(true);
+                    task.setCompletedAt(LocalDateTime.now());
+                } else {
+                    task.setCompleted(false);
+                    task.setCompletedAt(null);
+                }
+                saveTask(task);
+            });
             return checkbox;
         }).setHeader("Completed");
-        grid.getColumns().forEach(column -> column.setAutoWidth(true));
 
+        grid.getColumns().forEach(column -> column.setAutoWidth(true));
         grid.asSingleSelect().addValueChangeListener(event -> editTask(event.getValue()));
+    }
+
+    private void saveTask(TaskPojo task) {
+        // todo: implement
+    }
+
+    private void deleteTask(TaskPojo task) {
+        // todo: implement
     }
 
     private void closeEditor() {

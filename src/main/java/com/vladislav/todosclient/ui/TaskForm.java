@@ -23,6 +23,7 @@ public class TaskForm extends FormLayout {
     private final TextField title = new TextField("Title");
     private final TextArea content = new TextArea("Content");
     private final DateTimePicker deadline = new DateTimePicker("Deadline");
+    private final DateTimePicker completedAt = new DateTimePicker("Completed at");
     private final Checkbox completed = new Checkbox("Completed", false);
     private final Checkbox deleted = new Checkbox("Deleted", false);
 
@@ -37,11 +38,12 @@ public class TaskForm extends FormLayout {
 
         binder.bindInstanceFields(this);
 
+        completedAt.setReadOnly(true);
         add(
                 title,
                 content,
                 deadline,
-                deadline,
+                completedAt,
                 new HorizontalLayout(completed, deleted),
                 createButtonLayout()
         );
