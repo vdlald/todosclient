@@ -9,6 +9,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vladislav.todosclient.pojo.TaskPojo;
 import com.vladislav.todosclient.ui.TaskForm;
@@ -20,8 +21,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-@Route("")
-@CssImport("./styles/shared-styles.css")
+@PageTitle("All tasks | TODO")
+@Route(value = "", layout = MainLayout.class)
 public class TasksView extends VerticalLayout {
 
     private final Grid<TaskPojo> grid = new Grid<>(TaskPojo.class);
