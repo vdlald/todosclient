@@ -10,23 +10,16 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.server.VaadinRequest;
-
-import javax.servlet.http.Cookie;
+import com.vladislav.todosclient.utils.AuthUtils;
 
 @CssImport("./styles/shared-styles.css")
 public class MainLayout extends AppLayout {
 
-    public MainLayout() {
-        boolean isAuth = false;
-        for (Cookie cookie : VaadinRequest.getCurrent().getCookies()) {
-            if ("jwt".equals(cookie.getName())) {
-                // todo: check jwt
-                isAuth = true;
-            }
-        }
+    private final AuthUtils authUtils;
 
-        if (!isAuth) {
+    public MainLayout(AuthUtils authUtils) {
+        this.authUtils = authUtils;
+        if (!authUtils.checkAuth()) {
             UI.getCurrent().getPage().setLocation("/login");
             return;
         }

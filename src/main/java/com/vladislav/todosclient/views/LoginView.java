@@ -10,8 +10,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinResponse;
-import com.vladislav.todosclient.utils.AuthChecker;
+import com.vladislav.todosclient.utils.AuthUtils;
 import io.grpc.StatusRuntimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 
@@ -19,15 +21,19 @@ import javax.servlet.http.Cookie;
 @PageTitle("Login | TODO")
 public class LoginView extends VerticalLayout {
 
+    private static Logger logger = LoggerFactory.getLogger(LoginView.class);
+
     private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
+    private final AuthUtils authUtils;
 
     private final LoginForm login = new LoginForm();
 
-    public LoginView(UserServiceGrpc.UserServiceBlockingStub userBlockingStub) {
+    public LoginView(UserServiceGrpc.UserServiceBlockingStub userBlockingStub, AuthUtils authUtils) {
         this.userBlockingStub = userBlockingStub;
+        this.authUtils = authUtils;
 
-        if (AuthChecker.checkAuth()) {
-            UI.getCurrent().getPage().setLocation("");
+        if (authUtils.checkAuth()) {
+            navigateToMainPage();
             return;
         }
 
@@ -44,8 +50,9 @@ public class LoginView extends VerticalLayout {
             try {
                 final String jwt = authUser(username, password);
                 VaadinResponse.getCurrent().addCookie(new Cookie("jwt", jwt));
-                UI.getCurrent().navigate("");
+                navigateToMainPage();
             } catch (StatusRuntimeException e) {
+                e.printStackTrace();
                 login.setError(true);
             }
         });
@@ -63,5 +70,11 @@ public class LoginView extends VerticalLayout {
                 .build();
         final AuthenticateUserResponse response = userBlockingStub.authenticateUser(request);
         return response.getJwt();
+    }
+
+    private void navigateToMainPage() {
+        UI.getCurrent().navigate(TasksView.class);
+        UI.getCurrent().getPage().reload();
+//            UI.getCurrent().getPage().setLocation("");
     }
 }

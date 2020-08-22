@@ -1,5 +1,7 @@
 package com.vladislav.todosclient.views;
 
+import com.proto.todo.ProjectServiceGrpc;
+import com.proto.todo.TaskServiceGrpc;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -13,7 +15,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vladislav.todosclient.pojo.TaskPojo;
 import com.vladislav.todosclient.ui.TaskForm;
-import com.vladislav.todosclient.utils.AuthChecker;
+import com.vladislav.todosclient.utils.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -31,13 +33,24 @@ public class TasksView extends VerticalLayout {
     private final TaskForm taskForm = new TaskForm();
 
     private final DateTimeFormatter dateTimeFormatter;
+    private final AuthUtils authUtils;
+    private final TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub;
+    private final ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub;
 
     @Autowired
-    public TasksView(DateTimeFormatter dateTimeFormatter) {
+    public TasksView(
+            DateTimeFormatter dateTimeFormatter,
+            AuthUtils authUtils,
+            TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub,
+            ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub
+    ) {
         this.dateTimeFormatter = dateTimeFormatter;
+        this.authUtils = authUtils;
+        this.taskBlockingStub = taskBlockingStub;
+        this.projectBlockingStub = projectBlockingStub;
 
-        if (!AuthChecker.checkAuth()) {
-            UI.getCurrent().getPage().setLocation("/login");
+        if (!authUtils.checkAuth()) {
+            navigateToLoginPage();
             return;
         }
 
@@ -179,5 +192,10 @@ public class TasksView extends VerticalLayout {
             taskForm.setVisible(true);
             addClassName("editing");
         }
+    }
+
+    private void navigateToLoginPage() {
+        UI.getCurrent().navigate(LoginView.class);
+        UI.getCurrent().getPage().reload();
     }
 }

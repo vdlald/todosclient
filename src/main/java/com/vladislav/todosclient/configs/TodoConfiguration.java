@@ -1,6 +1,7 @@
 package com.vladislav.todosclient.configs;
 
-import com.proto.auth.UserServiceGrpc;
+import com.proto.todo.ProjectServiceGrpc;
+import com.proto.todo.TaskServiceGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,12 @@ public class TodoConfiguration {
     }
 
     @Bean
-    public UserServiceGrpc.UserServiceBlockingStub todoBlockingStub(ManagedChannel todoChannel) {
-        return UserServiceGrpc.newBlockingStub(todoChannel);
+    public TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub(ManagedChannel todoChannel) {
+        return TaskServiceGrpc.newBlockingStub(todoChannel);
+    }
+
+    @Bean
+    public ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub(ManagedChannel todoChannel) {
+        return ProjectServiceGrpc.newBlockingStub(todoChannel);
     }
 }
