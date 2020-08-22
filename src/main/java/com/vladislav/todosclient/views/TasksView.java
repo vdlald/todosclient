@@ -1,8 +1,8 @@
 package com.vladislav.todosclient.views;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -13,6 +13,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vladislav.todosclient.pojo.TaskPojo;
 import com.vladislav.todosclient.ui.TaskForm;
+import com.vladislav.todosclient.utils.AuthChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -34,6 +35,12 @@ public class TasksView extends VerticalLayout {
     @Autowired
     public TasksView(DateTimeFormatter dateTimeFormatter) {
         this.dateTimeFormatter = dateTimeFormatter;
+
+        if (!AuthChecker.checkAuth()) {
+            UI.getCurrent().getPage().setLocation("/login");
+            return;
+        }
+
         addClassName("task-list");
         setSizeFull();
 

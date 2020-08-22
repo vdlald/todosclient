@@ -9,8 +9,11 @@ import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.server.VaadinResponse;
+import com.vladislav.todosclient.utils.AuthChecker;
 import io.grpc.StatusRuntimeException;
+
+import javax.servlet.http.Cookie;
 
 @Route("login")
 @PageTitle("Login | TODO")
@@ -22,6 +25,12 @@ public class LoginView extends VerticalLayout {
 
     public LoginView(UserServiceGrpc.UserServiceBlockingStub userBlockingStub) {
         this.userBlockingStub = userBlockingStub;
+
+        if (AuthChecker.checkAuth()) {
+            UI.getCurrent().getPage().setLocation("");
+            return;
+        }
+
         addClassName("login-view");
         setSizeFull();
 
@@ -33,13 +42,8 @@ public class LoginView extends VerticalLayout {
             final String username = event.getUsername();
             final String password = event.getPassword();
             try {
-                final AuthenticateUserRequest request = AuthenticateUserRequest.newBuilder()
-                        .setUsername(username)
-                        .setPassword(password)
-                        .build();
-                final AuthenticateUserResponse response = userBlockingStub.authenticateUser(request);
-                final String jwt = response.getJwt();
-                VaadinSession.getCurrent().setAttribute("jwt", jwt);
+                final String jwt = authUser(username, password);
+                VaadinResponse.getCurrent().addCookie(new Cookie("jwt", jwt));
                 UI.getCurrent().navigate("");
             } catch (StatusRuntimeException e) {
                 login.setError(true);
@@ -50,5 +54,14 @@ public class LoginView extends VerticalLayout {
                 new H1("TODO"),
                 login
         );
+    }
+
+    private String authUser(String username, String password) {
+        final AuthenticateUserRequest request = AuthenticateUserRequest.newBuilder()
+                .setUsername(username)
+                .setPassword(password)
+                .build();
+        final AuthenticateUserResponse response = userBlockingStub.authenticateUser(request);
+        return response.getJwt();
     }
 }
