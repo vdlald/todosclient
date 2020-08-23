@@ -1,8 +1,6 @@
 package com.vladislav.todosclient.ui;
 
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -85,6 +83,26 @@ public class SignUpForm extends FormLayout {
 
         return !usernameField.isInvalid() && !passwordField.isInvalid()
                 && passwordRepeatField.isInvalid() && password.equals(passwordRepeat);
+    }
+
+    public void usernameIsTaken(boolean isTaken) {
+        usernameField.setInvalid(isTaken);
+        if (isTaken) {
+            usernameField.setErrorMessage("Username is taken");
+            usernameField.addValueChangeListener(new HasValue.ValueChangeListener<>() {
+                private boolean isChanged = false;
+
+                @Override
+                public void valueChanged(
+                        AbstractField.ComponentValueChangeEvent<TextField, String> textFieldStringComponentValueChangeEvent
+                ) {
+                    if (!isChanged) {
+                        isChanged = true;
+                        usernameField.setInvalid(false);
+                    }
+                }
+            });
+        }
     }
 
     public static abstract class SignUpFormEvent extends ComponentEvent<SignUpForm> {
