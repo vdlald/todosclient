@@ -11,7 +11,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vladislav.todosclient.ui.SignUpForm;
-import com.vladislav.todosclient.utils.AuthUtils;
+import com.vladislav.todosclient.utils.JwtUtils;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 
@@ -21,15 +21,15 @@ import io.grpc.StatusRuntimeException;
 public class RegistrationView extends VerticalLayout {
 
     private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
-    private final AuthUtils authUtils;
+    private final JwtUtils jwtUtils;
 
     private final SignUpForm signUpForm = new SignUpForm();
 
-    public RegistrationView(UserServiceGrpc.UserServiceBlockingStub userBlockingStub, AuthUtils authUtils) {
+    public RegistrationView(UserServiceGrpc.UserServiceBlockingStub userBlockingStub, JwtUtils jwtUtils) {
         this.userBlockingStub = userBlockingStub;
-        this.authUtils = authUtils;
+        this.jwtUtils = jwtUtils;
 
-        if (authUtils.checkAuth()) {
+        if (jwtUtils.getCurrentUserId().isPresent()) {
             navigateToMainPage();
             return;
         }

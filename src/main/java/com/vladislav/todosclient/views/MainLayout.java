@@ -10,16 +10,16 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
-import com.vladislav.todosclient.utils.AuthUtils;
+import com.vladislav.todosclient.utils.JwtUtils;
 
 @CssImport("./styles/shared-styles.css")
 public class MainLayout extends AppLayout {
 
-    private final AuthUtils authUtils;
+    private final JwtUtils jwtUtils;
 
-    public MainLayout(AuthUtils authUtils) {
-        this.authUtils = authUtils;
-        if (!authUtils.checkAuth()) {
+    public MainLayout(JwtUtils jwtUtils) {
+        this.jwtUtils = jwtUtils;
+        if (jwtUtils.getCurrentUserId().isEmpty()) {
             UI.getCurrent().getPage().setLocation("/login");
             return;
         }

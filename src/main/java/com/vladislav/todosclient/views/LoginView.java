@@ -12,7 +12,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinResponse;
 import com.vladislav.todosclient.ui.LoginForm;
-import com.vladislav.todosclient.utils.AuthUtils;
+import com.vladislav.todosclient.utils.JwtUtils;
 import io.grpc.StatusRuntimeException;
 
 import javax.servlet.http.Cookie;
@@ -23,15 +23,15 @@ import javax.servlet.http.Cookie;
 public class LoginView extends VerticalLayout {
 
     private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
-    private final AuthUtils authUtils;
+    private final JwtUtils jwtUtils;
 
     private final LoginForm login = new LoginForm();
 
-    public LoginView(UserServiceGrpc.UserServiceBlockingStub userBlockingStub, AuthUtils authUtils) {
+    public LoginView(UserServiceGrpc.UserServiceBlockingStub userBlockingStub, JwtUtils jwtUtils) {
         this.userBlockingStub = userBlockingStub;
-        this.authUtils = authUtils;
+        this.jwtUtils = jwtUtils;
 
-        if (authUtils.checkAuth()) {
+        if (jwtUtils.getCurrentUserId().isPresent()) {
             navigateToMainPage();
             return;
         }

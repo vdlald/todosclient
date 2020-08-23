@@ -15,8 +15,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vladislav.todosclient.pojo.TaskPojo;
 import com.vladislav.todosclient.ui.TaskForm;
-import com.vladislav.todosclient.utils.AuthUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.vladislav.todosclient.utils.JwtUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -33,23 +32,22 @@ public class TasksView extends VerticalLayout {
     private final TaskForm taskForm = new TaskForm();
 
     private final DateTimeFormatter dateTimeFormatter;
-    private final AuthUtils authUtils;
+    private final JwtUtils jwtUtils;
     private final TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub;
     private final ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub;
 
-    @Autowired
     public TasksView(
             DateTimeFormatter dateTimeFormatter,
-            AuthUtils authUtils,
+            JwtUtils jwtUtils,
             TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub,
             ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub
     ) {
         this.dateTimeFormatter = dateTimeFormatter;
-        this.authUtils = authUtils;
+        this.jwtUtils = jwtUtils;
         this.taskBlockingStub = taskBlockingStub;
         this.projectBlockingStub = projectBlockingStub;
 
-        if (!authUtils.checkAuth()) {
+        if (jwtUtils.getCurrentUserId().isEmpty()) {
             navigateToLoginPage();
             return;
         }

@@ -2,7 +2,7 @@
 
 a[highlight] {
     font-weight: bold;
-    text-decoration: underline;
+    /*text-decoration: underline;*/
 }
 
 .header {
