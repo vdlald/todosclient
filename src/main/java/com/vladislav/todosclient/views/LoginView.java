@@ -11,11 +11,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinResponse;
+import com.vaadin.flow.server.VaadinSession;
 import com.vladislav.todosclient.ui.LoginForm;
 import com.vladislav.todosclient.utils.JwtUtils;
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-
-import javax.servlet.http.Cookie;
 
 @Route("login")
 @PageTitle("Login | TODO")
@@ -47,10 +47,15 @@ public class LoginView extends VerticalLayout {
             final String password = event.getPassword();
             try {
                 final String jwt = authUser(username, password);
-                VaadinResponse.getCurrent().addCookie(new Cookie("jwt", jwt));
+                VaadinSession.getCurrent().setAttribute("jwt", jwt);
                 navigateToMainPage();
             } catch (StatusRuntimeException e) {
-                login.setError(true);
+                final Status status = e.getStatus();
+                if (status.equals(Status.UNAUTHENTICATED) || status.equals(Status.NOT_FOUND)) {
+                    login.setError(true);
+                } else {
+                    e.printStackTrace();
+                }
             }
         });
 

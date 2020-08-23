@@ -1,5 +1,7 @@
 package com.vladislav.todosclient.views;
 
+import com.proto.todo.GetAllUserTasksRequest;
+import com.proto.todo.GetAllUserTasksResponse;
 import com.proto.todo.ProjectServiceGrpc;
 import com.proto.todo.TaskServiceGrpc;
 import com.vaadin.flow.component.UI;
@@ -16,12 +18,14 @@ import com.vaadin.flow.router.Route;
 import com.vladislav.todosclient.pojo.TaskPojo;
 import com.vladislav.todosclient.ui.TaskForm;
 import com.vladislav.todosclient.utils.JwtUtils;
+import com.vladislav.todosclient.utils.Utils;
+import com.vladislav.todosclient.utils.mappers.TaskMapper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @PageTitle("All tasks | TODO")
 @Route(value = "", layout = MainLayout.class)
@@ -31,17 +35,20 @@ public class TasksView extends VerticalLayout {
     private final TextField filterText = new TextField();
     private final TaskForm taskForm = new TaskForm();
 
+    private final TaskMapper taskMapper;
     private final DateTimeFormatter dateTimeFormatter;
     private final JwtUtils jwtUtils;
     private final TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub;
     private final ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub;
 
     public TasksView(
+            TaskMapper taskMapper,
             DateTimeFormatter dateTimeFormatter,
             JwtUtils jwtUtils,
             TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub,
             ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub
     ) {
+        this.taskMapper = taskMapper;
         this.dateTimeFormatter = dateTimeFormatter;
         this.jwtUtils = jwtUtils;
         this.taskBlockingStub = taskBlockingStub;
@@ -103,30 +110,15 @@ public class TasksView extends VerticalLayout {
     }
 
     private void updateGrid() {
-        final List<TaskPojo> tasks = List.of(
-                TaskPojo.builder()
-                        .setId(UUID.randomUUID())
-                        .setUserId(UUID.randomUUID())
-                        .setProjectId(UUID.randomUUID())
-                        .setTitle("First task")
-                        .setContent("First body")
-                        .setCompleted(false)
-                        .setDeadline(LocalDateTime.now().plusDays(3))
-                        .setCreatedAt(LocalDateTime.now())
-                        .setIsDeleted(false)
-                        .build(),
-                TaskPojo.builder()
-                        .setId(UUID.randomUUID())
-                        .setUserId(UUID.randomUUID())
-                        .setProjectId(UUID.randomUUID())
-                        .setTitle("Second task")
-                        .setContent("Second body")
-                        .setCompleted(true)
-                        .setDeadline(LocalDateTime.now())
-                        .setCreatedAt(LocalDateTime.now())
-                        .setCompletedAt(LocalDateTime.now())
-                        .setIsDeleted(false)
-                        .build());
+        final GetAllUserTasksRequest request = GetAllUserTasksRequest.newBuilder()
+                .setUserId(jwtUtils.getCurrentUserId().get())
+                .build();
+
+        final List<TaskPojo> tasks = Utils.stream(taskBlockingStub.getAllUserTasks(request))
+                .map(GetAllUserTasksResponse::getTask)
+                .map(taskMapper::toDocument)
+                .collect(Collectors.toUnmodifiableList());
+
         final String filterValue = filterText.getValue();
         if (filterValue == null || filterValue.isBlank() || filterValue.isEmpty()) {
             grid.setItems(tasks);
