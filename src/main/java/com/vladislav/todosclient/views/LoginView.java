@@ -75,6 +75,5 @@ public class LoginView extends VerticalLayout {
     private void navigateToMainPage() {
         UI.getCurrent().navigate(TasksView.class);
         UI.getCurrent().getPage().reload();
-//            UI.getCurrent().getPage().setLocation("");
     }
 }

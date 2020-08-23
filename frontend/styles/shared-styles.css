@@ -39,7 +39,8 @@ a[highlight] {
     display: flex;
 }
 
-.login-form > * > .username-field, .login-form > * > .password-field {
+.login-form > * > .username-field, .login-form > * > .password-field,
+.signup-form > * > .username-field, .signup-form > * > .password-field {
     margin-top: var(--lumo-space-s);
 }
 
