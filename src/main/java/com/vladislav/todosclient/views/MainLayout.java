@@ -10,7 +10,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.VaadinSession;
 import com.vladislav.todosclient.utils.JwtUtils;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 
 @CssImport("./styles/shared-styles.css")
 public class MainLayout extends AppLayout {
@@ -23,6 +26,20 @@ public class MainLayout extends AppLayout {
             UI.getCurrent().getPage().setLocation("/login");
             return;
         }
+
+        VaadinSession.getCurrent().setErrorHandler(event -> {
+            final Throwable throwable = event.getThrowable();
+            if (throwable instanceof StatusRuntimeException) {
+                StatusRuntimeException exception = (StatusRuntimeException) throwable;
+                if (exception.getStatus().equals(Status.UNAUTHENTICATED)) {
+
+                } else {
+                    exception.printStackTrace();
+                }
+            } else {
+                throwable.printStackTrace();
+            }
+        });
 
         createHeader();
         createDrawer();

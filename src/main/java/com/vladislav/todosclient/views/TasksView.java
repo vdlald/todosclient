@@ -1,9 +1,6 @@
 package com.vladislav.todosclient.views;
 
-import com.proto.todo.GetAllUserTasksRequest;
-import com.proto.todo.GetAllUserTasksResponse;
-import com.proto.todo.ProjectServiceGrpc;
-import com.proto.todo.TaskServiceGrpc;
+import com.proto.todo.*;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -164,7 +161,7 @@ public class TasksView extends VerticalLayout {
     }
 
     private void deleteTask(TaskPojo task) {
-        // todo: implement
+        taskBlockingStub.deleteTask(DeleteTaskRequest.newBuilder().setTaskId(task.getId().toString()).build());
     }
 
     private void closeEditor() {
@@ -185,7 +182,6 @@ public class TasksView extends VerticalLayout {
     }
 
     private void navigateToLoginPage() {
-        UI.getCurrent().navigate(LoginView.class);
-        UI.getCurrent().getPage().reload();
+        Utils.navigateTo(LoginView.class);
     }
 }

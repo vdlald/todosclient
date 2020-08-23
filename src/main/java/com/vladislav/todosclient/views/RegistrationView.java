@@ -12,6 +12,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vladislav.todosclient.ui.SignUpForm;
 import com.vladislav.todosclient.utils.JwtUtils;
+import com.vladislav.todosclient.utils.Utils;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 
@@ -64,12 +65,10 @@ public class RegistrationView extends VerticalLayout {
     }
 
     private void navigateToMainPage() {
-        UI.getCurrent().navigate(TasksView.class);
-        UI.getCurrent().getPage().reload();
+        Utils.navigateTo(TasksView.class);
     }
 
     private void navigateToLoginView() {
-        UI.getCurrent().navigate(LoginView.class);
-        UI.getCurrent().getPage().reload();
+        Utils.navigateTo(LoginView.class);
     }
 }

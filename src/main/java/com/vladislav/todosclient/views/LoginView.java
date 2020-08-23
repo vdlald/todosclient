@@ -10,10 +10,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.server.VaadinResponse;
 import com.vaadin.flow.server.VaadinSession;
 import com.vladislav.todosclient.ui.LoginForm;
 import com.vladislav.todosclient.utils.JwtUtils;
+import com.vladislav.todosclient.utils.Utils;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 
@@ -78,7 +78,6 @@ public class LoginView extends VerticalLayout {
     }
 
     private void navigateToMainPage() {
-        UI.getCurrent().navigate(TasksView.class);
-        UI.getCurrent().getPage().reload();
+        Utils.navigateTo(TasksView.class);
     }
 }
