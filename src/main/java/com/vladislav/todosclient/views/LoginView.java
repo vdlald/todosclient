@@ -4,24 +4,23 @@ import com.proto.auth.AuthenticateUserRequest;
 import com.proto.auth.AuthenticateUserResponse;
 import com.proto.auth.UserServiceGrpc;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinResponse;
+import com.vladislav.todosclient.ui.LoginForm;
 import com.vladislav.todosclient.utils.AuthUtils;
 import io.grpc.StatusRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 
 @Route("login")
 @PageTitle("Login | TODO")
+@CssImport("./styles/shared-styles.css")
 public class LoginView extends VerticalLayout {
-
-    private static Logger logger = LoggerFactory.getLogger(LoginView.class);
 
     private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
     private final AuthUtils authUtils;
@@ -43,7 +42,6 @@ public class LoginView extends VerticalLayout {
         setJustifyContentMode(JustifyContentMode.CENTER);
         setAlignItems(Alignment.CENTER);
 
-        login.setAction("login");
         login.addLoginListener(event -> {
             final String username = event.getUsername();
             final String password = event.getPassword();
@@ -52,14 +50,16 @@ public class LoginView extends VerticalLayout {
                 VaadinResponse.getCurrent().addCookie(new Cookie("jwt", jwt));
                 navigateToMainPage();
             } catch (StatusRuntimeException e) {
-                e.printStackTrace();
                 login.setError(true);
             }
         });
 
+        final RouterLink registration = new RouterLink("Registration", RegistrationView.class);
+        registration.addClassName("registration-link");
         add(
                 new H1("TODO"),
-                login
+                login,
+                registration
         );
     }
 

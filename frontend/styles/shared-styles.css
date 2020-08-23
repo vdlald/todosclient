@@ -28,6 +28,68 @@ a[highlight] {
     padding: var(--lumo-space-m);
 }
 
+/* RegistrationView */
+.registration-link {
+    margin-top: 0;
+}
+
+/* LoginForm */
+.login-form {
+    justify-content: center;
+    display: flex;
+}
+
+.login-form > * > .username-field, .login-form > * > .password-field {
+    margin-top: var(--lumo-space-s);
+}
+
+.login-form > .layout {
+    /*width: 100% !important;*/
+    max-width: 331px !important;
+    min-width: 331px !important;
+    margin-right: 0;
+}
+
+.login-form > * > h2 {
+    margin: 0;
+    margin-top: calc(var(--lumo-font-size-xxxl) - var(--lumo-font-size-xxl)) !important;
+}
+
+.login-form > * > .error-message {
+    color: var(--lumo-error-text-color);
+    background-color: var(--lumo-error-color-10pct);
+    border-radius: var(--lumo-border-radius);
+    margin-top: var(--lumo-space-m);
+    margin-bottom: var(--lumo-space-s);
+    padding: var(--lumo-space-m);
+    padding-left: var(--lumo-size-m);
+    position: relative;
+}
+
+.login-form > * > .error-message > h5 {
+    margin: 0 0 0.25em;
+    color: inherit;
+}
+
+.login-form > * > .error-message > p {
+    font-size: var(--lumo-font-size-s);
+    line-height: var(--lumo-line-height-s);
+    margin: 0;
+    opacity: 0.9;
+}
+
+.login-form > * > .error-message::before {
+    margin-left: calc(var(--lumo-size-m) * -0.95);
+    content: var(--lumo-icons-error);
+    font-size: var(--lumo-icon-size-m);
+    position: absolute;
+    width: var(--lumo-size-m);
+    height: 1em;
+    line-height: 1;
+    text-align: center;
+    font-family: lumo-icons;
+}
+
 @media all and (max-width: 1100px) {
     .task-list.editing .toolbar,
     .task-list.editing .task-grid {
