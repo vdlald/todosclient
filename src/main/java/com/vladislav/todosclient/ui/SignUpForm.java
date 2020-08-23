@@ -94,11 +94,11 @@ public class SignUpForm extends FormLayout {
 
                 @Override
                 public void valueChanged(
-                        AbstractField.ComponentValueChangeEvent<TextField, String> textFieldStringComponentValueChangeEvent
+                        AbstractField.ComponentValueChangeEvent<TextField, String> event
                 ) {
                     if (!isChanged) {
                         isChanged = true;
-                        usernameField.setInvalid(false);
+                        event.getSource().setInvalid(false);
                     }
                 }
             });
