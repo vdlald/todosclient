@@ -3,7 +3,6 @@ package com.vladislav.todosclient.views;
 import com.proto.auth.AuthenticateUserRequest;
 import com.proto.auth.AuthenticateUserResponse;
 import com.proto.auth.UserServiceGrpc;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;

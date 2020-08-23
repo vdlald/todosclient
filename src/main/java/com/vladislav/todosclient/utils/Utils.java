@@ -2,7 +2,6 @@ package com.vladislav.todosclient.utils;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
-import com.vladislav.todosclient.views.LoginView;
 
 import java.util.Iterator;
 import java.util.stream.Stream;
