@@ -1,7 +1,6 @@
 package com.vladislav.todosclient.views;
 
 import com.proto.todo.*;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.grid.Grid;
@@ -21,6 +20,7 @@ import com.vladislav.todosclient.utils.mappers.TaskMapper;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -157,7 +157,14 @@ public class TasksView extends VerticalLayout {
     }
 
     private void saveTask(TaskPojo task) {
-        // todo: implement
+        final UUID taskId = task.getId();
+        final Task taskDto = taskMapper.toDto(task);
+        if (taskId == null) {
+            final CreateTaskRequest request = CreateTaskRequest.newBuilder().setTask(taskDto).build();
+            final CreateTaskResponse response = taskBlockingStub.createTask(request);
+        } else {
+            taskBlockingStub.updateTask(UpdateTaskRequest.newBuilder().setTask(taskDto).build());
+        }
     }
 
     private void deleteTask(TaskPojo task) {

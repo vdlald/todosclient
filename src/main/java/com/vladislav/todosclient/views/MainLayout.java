@@ -12,8 +12,11 @@ import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
 import com.vladislav.todosclient.utils.JwtUtils;
+import com.vladislav.todosclient.utils.Utils;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+
+import java.time.format.DateTimeParseException;
 
 @CssImport("./styles/shared-styles.css")
 public class MainLayout extends AppLayout {
@@ -32,11 +35,12 @@ public class MainLayout extends AppLayout {
             if (throwable instanceof StatusRuntimeException) {
                 StatusRuntimeException exception = (StatusRuntimeException) throwable;
                 if (exception.getStatus().equals(Status.UNAUTHENTICATED)) {
-
+                    VaadinSession.getCurrent().setAttribute("jwt", null);
+                    Utils.navigateTo(LoginView.class);
                 } else {
                     exception.printStackTrace();
                 }
-            } else {
+            } else if (!(throwable instanceof DateTimeParseException)) {
                 throwable.printStackTrace();
             }
         });
