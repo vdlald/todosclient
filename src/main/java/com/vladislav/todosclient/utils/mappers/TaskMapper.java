@@ -17,9 +17,13 @@ public class TaskMapper implements PojoMapper<TaskPojo, Task> {
         if (!task.getId().isEmpty()) {
             pojoBuilder.setId(UUID.fromString(task.getId()));
         }
+        if (!task.getUserId().isEmpty()) {
+            pojoBuilder.setUserId(UUID.fromString(task.getUserId()));
+        }
+        if (!task.getProjectId().isEmpty()) {
+            pojoBuilder.setProjectId(UUID.fromString(task.getProjectId()));
+        }
         return pojoBuilder
-                .setUserId(UUID.fromString(task.getUserId()))
-                .setProjectId(UUID.fromString(task.getProjectId()))
                 .setTitle(task.getTitle())
                 .setContent(task.getContent())
                 .setCompleted(task.getCompleted())
