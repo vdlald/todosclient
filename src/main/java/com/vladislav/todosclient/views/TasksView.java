@@ -12,6 +12,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vladislav.todosclient.pojo.TaskPojo;
+import com.vladislav.todosclient.services.TaskService;
 import com.vladislav.todosclient.ui.TaskForm;
 import com.vladislav.todosclient.utils.JwtUtils;
 import com.vladislav.todosclient.utils.Utils;
@@ -22,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @PageTitle("All tasks | TODO")
 @Route(value = "", layout = MainLayout.class)
@@ -35,21 +35,19 @@ public class TasksView extends VerticalLayout {
     private final TaskMapper taskMapper;
     private final DateTimeFormatter dateTimeFormatter;
     private final JwtUtils jwtUtils;
-    private final TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub;
-    private final ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub;
+
+    private final TaskService taskService;
 
     public TasksView(
             TaskMapper taskMapper,
             DateTimeFormatter dateTimeFormatter,
             JwtUtils jwtUtils,
-            TaskServiceGrpc.TaskServiceBlockingStub taskBlockingStub,
-            ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub
+            TaskService taskService
     ) {
         this.taskMapper = taskMapper;
         this.dateTimeFormatter = dateTimeFormatter;
         this.jwtUtils = jwtUtils;
-        this.taskBlockingStub = taskBlockingStub;
-        this.projectBlockingStub = projectBlockingStub;
+        this.taskService = taskService;
 
         if (jwtUtils.getCurrentUserId().isEmpty()) {
             navigateToLoginPage();
@@ -111,10 +109,7 @@ public class TasksView extends VerticalLayout {
                 .setUserId(jwtUtils.getCurrentUserId().get())
                 .build();
 
-        final List<TaskPojo> tasks = Utils.stream(taskBlockingStub.getAllUserTasks(request))
-                .map(GetAllUserTasksResponse::getTask)
-                .map(taskMapper::toDocument)
-                .collect(Collectors.toUnmodifiableList());
+        final List<TaskPojo> tasks = taskService.getAllTasks(request);
 
         final String filterValue = filterText.getValue();
         if (filterValue == null || filterValue.isBlank() || filterValue.isEmpty()) {
@@ -161,14 +156,16 @@ public class TasksView extends VerticalLayout {
         final Task taskDto = taskMapper.toDto(task);
         if (taskId == null) {
             final CreateTaskRequest request = CreateTaskRequest.newBuilder().setTask(taskDto).build();
-            final CreateTaskResponse response = taskBlockingStub.createTask(request);
+            taskService.createTask(request);
         } else {
-            taskBlockingStub.updateTask(UpdateTaskRequest.newBuilder().setTask(taskDto).build());
+            final UpdateTaskRequest request = UpdateTaskRequest.newBuilder().setTask(taskDto).build();
+            taskService.updateTask(request);
         }
     }
 
     private void deleteTask(TaskPojo task) {
-        taskBlockingStub.deleteTask(DeleteTaskRequest.newBuilder().setTaskId(task.getId().toString()).build());
+        final DeleteTaskRequest request = DeleteTaskRequest.newBuilder().setTaskId(task.getId().toString()).build();
+        taskService.deleteTask(request);
     }
 
     private void closeEditor() {

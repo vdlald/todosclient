@@ -3,7 +3,6 @@ package com.vladislav.todosclient.configs;
 import com.proto.todo.ProjectServiceGrpc;
 import com.proto.todo.TaskServiceGrpc;
 import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
@@ -34,7 +33,7 @@ public class TodoConfiguration {
     }
 
     @Bean
-    @VaadinSessionScope
+    @Scope("prototype")
     public ProjectServiceGrpc.ProjectServiceBlockingStub projectBlockingStub(ManagedChannel todoChannel) {
         return attachJwt(ProjectServiceGrpc.newBlockingStub(todoChannel));
     }

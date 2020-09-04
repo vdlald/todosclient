@@ -22,6 +22,8 @@ import io.grpc.StatusRuntimeException;
 public class LoginView extends VerticalLayout {
 
     private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
+
+    @SuppressWarnings("all")
     private final JwtUtils jwtUtils;
 
     private final LoginForm login = new LoginForm();
@@ -45,8 +47,7 @@ public class LoginView extends VerticalLayout {
             final String username = event.getUsername();
             final String password = event.getPassword();
             try {
-                final String jwt = authUser(username, password);
-                VaadinSession.getCurrent().setAttribute("jwt", jwt);
+                authUser(username, password);
                 navigateToMainPage();
             } catch (StatusRuntimeException e) {
                 final Status status = e.getStatus();
@@ -67,13 +68,20 @@ public class LoginView extends VerticalLayout {
         );
     }
 
-    private String authUser(String username, String password) {
+    private void authUser(String username, String password) {
         final AuthenticateUserRequest request = AuthenticateUserRequest.newBuilder()
                 .setUsername(username)
                 .setPassword(password)
                 .build();
+
         final AuthenticateUserResponse response = userBlockingStub.authenticateUser(request);
-        return response.getJwt();
+
+        final String jwt = response.getJwt();
+        final String refreshToken = response.getRefreshToken();
+
+        final VaadinSession vaadinSession = VaadinSession.getCurrent();
+        vaadinSession.setAttribute("jwt", jwt);
+        vaadinSession.setAttribute("refresh-token", refreshToken);
     }
 
     private void navigateToMainPage() {
