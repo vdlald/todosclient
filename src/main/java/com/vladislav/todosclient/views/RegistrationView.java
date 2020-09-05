@@ -1,9 +1,8 @@
 package com.vladislav.todosclient.views;
 
-import com.proto.auth.RegisterUserRequest;
-import com.proto.auth.RegisterUserResponse;
+import com.proto.auth.UserRegistrationRequest;
+import com.proto.auth.UserRegistrationResponse;
 import com.proto.auth.UserServiceGrpc;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -47,12 +46,12 @@ public class RegistrationView extends VerticalLayout {
         add(new H1("TODO"), formWrapper);
 
         signUpForm.addSignUpListener(event -> {
-            final RegisterUserRequest request = RegisterUserRequest.newBuilder()
+            final UserRegistrationRequest request = UserRegistrationRequest.newBuilder()
                     .setUsername(event.getUsername())
                     .setPassword(event.getPassword())
                     .build();
             try {
-                final RegisterUserResponse response = userBlockingStub.registerUser(request);
+                final UserRegistrationResponse response = userBlockingStub.registerUser(request);
                 navigateToLoginView();
             } catch (StatusRuntimeException e) {
                 if (e.getStatus().equals(Status.ALREADY_EXISTS)) {

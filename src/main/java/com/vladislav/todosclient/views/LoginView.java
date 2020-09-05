@@ -1,7 +1,7 @@
 package com.vladislav.todosclient.views;
 
-import com.proto.auth.AuthenticateUserRequest;
-import com.proto.auth.AuthenticateUserResponse;
+import com.proto.auth.UserAuthenticationRequest;
+import com.proto.auth.UserAuthenticationResponse;
 import com.proto.auth.UserServiceGrpc;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
@@ -69,12 +69,12 @@ public class LoginView extends VerticalLayout {
     }
 
     private void authUser(String username, String password) {
-        final AuthenticateUserRequest request = AuthenticateUserRequest.newBuilder()
+        final UserAuthenticationRequest request = UserAuthenticationRequest.newBuilder()
                 .setUsername(username)
                 .setPassword(password)
                 .build();
 
-        final AuthenticateUserResponse response = userBlockingStub.authenticateUser(request);
+        final UserAuthenticationResponse response = userBlockingStub.authenticateUser(request);
 
         final String jwt = response.getJwt();
         final String refreshToken = response.getRefreshToken();
